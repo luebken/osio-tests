@@ -21,11 +21,14 @@ fi
 git clone https://github.com/openshiftio-vertx-boosters/$BOOSTER
 cd $BOOSTER
 
+echo "Starting test at: "$(date)
 STACK_ID=$(curl -sH "Authorization: Bearer $OSIO_TOKEN" -F "manifest[]=@./pom.xml" $API/stack-analyses | jq .id)
 echo "Analysis started. Request ID: $STACK_ID"
 
 # Polling stack-anaylsis every minute
+TRIES=0
 while : ; do
+  TRIES=$((TRIES + 1))
   STACK_REQUEST_RESPONSE=$(curl -sH "Authorization: Bearer $OSIO_TOKEN" $API/stack-analyses/$STACK_ID)
   echo STACK_REQUEST_RESPONSE = $STACK_REQUEST_RESPONSE
   ERROR=$(echo $STACK_REQUEST_RESPONSE | jq .error)
@@ -34,9 +37,10 @@ while : ; do
       break
   fi
   echo "stack analysis with id: $STACK_ID in progress."
-  echo "trying again in:"
+  echo "This was the try nr.: $TRIES. Trying again in:"
   for i in {60..1};do echo -ne "$i\033[0K\r" && sleep 1; done
 done
+echo "stack analysis done at" + date
 
 #TOOD write the actual test
 
