@@ -26,18 +26,19 @@ STACK_ID=$(curl -sH "Authorization: Bearer $OSIO_TOKEN" -F "manifest[]=@./pom.xm
 echo "Analysis started. Request ID: $STACK_ID"
 
 # Polling stack-anaylsis every minute
-TRIES=0
+ATTEMPT=0
 while : ; do
-  TRIES=$((TRIES + 1))
+  ATTEMPT=$((ATTEMPT + 1))
   STACK_REQUEST_RESPONSE=$(curl -sH "Authorization: Bearer $OSIO_TOKEN" $API/stack-analyses/$STACK_ID)
-  echo STACK_REQUEST_RESPONSE = $STACK_REQUEST_RESPONSE
   ERROR=$(echo $STACK_REQUEST_RESPONSE | jq .error)
-  if [ "$ERROR" == "" ]; then
+  echo err $ERROR
+  echo resp $STACK_REQUEST_RESPONSE
+  if [[ $ERROR == "null" ]]; then
       echo "stack analysis for $STACK_ID done"
       break
   fi
   echo "stack analysis with id: $STACK_ID in progress."
-  echo "This was the try nr.: $TRIES. Trying again in:"
+  echo "This was the attempt nr.: $ATTEMPT. Trying again in:"
   for i in {60..1};do echo -ne "$i\033[0K\r" && sleep 1; done
 done
 echo "stack analysis done at" + date
