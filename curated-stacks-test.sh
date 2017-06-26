@@ -22,7 +22,7 @@ git clone https://github.com/openshiftio-vertx-boosters/$BOOSTER
 cd $BOOSTER
 
 echo "Starting test at: "$(date)
-STACK_ID=$(curl -sH "Authorization: Bearer $OSIO_TOKEN" -F "manifest[]=@./pom.xml" $API/stack-analyses | jq .id)
+STACK_ID=$(curl -sH "Authorization: Bearer $OSIO_TOKEN" -F "manifest[]=@./pom.xml" $API/stack-analyses | jq -r .id)
 echo "Analysis started. Request ID: $STACK_ID"
 
 # Polling stack-anaylsis every minute
