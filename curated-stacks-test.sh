@@ -39,9 +39,15 @@ while : ; do
   fi
   echo "stack analysis with id: $STACK_ID in progress."
   echo "This was the attempt nr.: $ATTEMPT. Trying again in:"
-  for i in {60..1};do echo -ne "$i\033[0K\r" && sleep 1; done
+  for i in {20..1};do echo -ne "$i\033[0K\r" && sleep 1; done
 done
-echo "stack analysis done at" + date
+echo "stack analysis done at " $(date)
 
-#TOOD write the actual test
+SIMILAR_STACKS=$(echo $STACK_REQUEST_RESPONSE | jq .recommendation.recommendations.similar_stacks)
+echo "SIMILAR_STACKS:" $SIMILAR_STACKS
+if [ "$SIMILAR_STACKS" != "[]" ]; then
+    echo "Failure:" $BOOSTER "shouldn't have any recommendations."
+fi
+
+echo "Done. Exit."
 
